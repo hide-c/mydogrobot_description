@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<robot name="mydogrobot"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:property name="pos_leg_rl" value="0.077" />
+    <!--左右の足の間の距離-->
+    <xacro:property name="pos_leg_back" value="0.007" />
+    <!--後足のX座標-->
+    <xacro:property name="pos_leg_front" value="0.143" />
+    <!--前足のX座標-->
+    <xacro:property name="pos_head_x" value="0.205" />
+    <xacro:property name="pos_head_z" value="0.00" />
+    <!--頭の取り付け穴のX座標-->
+    <xacro:property name="width_foot_rl" value="0.10" />
+    <xacro:property name="width_foot_v" value="-0.025" />
+    <xacro:property name="width_foot_front" value="0.153" />
+    <xacro:property name="width_foot_back" value="0.017" />
+    <xacro:property name="leg_rev_limit_l" value="-1.5" />
+    <xacro:property name="leg_rev_limit_u" value="1.5" />
+    <xacro:property name="leg_rev_limit_eff" value="0" />
+    <xacro:property name="leg_rev_limit_vel" value="0" />
+
+
+
+
+    <material name="red">
+        <color rgba="1.0 0.0 0.0 1.0"/>
+    </material>
+    <material name="blue">
+        <color rgba="0.0 0.0 1.0 1.0"/>
+    </material>
+    <material name="yellow">
+        <color rgba="0.0 1.0 0.0 1.0"/>
+    </material>
+
+    <!--BODY部分-->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/body.stl" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="blue"/>
+        </visual>
+    </link>
+
+    <!--BODY_frontleg_r間のジョイント-->
+    <joint name="backleg_r_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="backleg_r_link"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="${pos_leg_back} ${-1*(pos_leg_rl)*0.5} 0"/>
+        <limit lower="${leg_rev_limit_l}" upper="${leg_rev_limit_u}" effort="${leg_rev_limit_eff}" velocity="${leg_rev_limit_vel}"/>
+    </joint>
+    <joint name="backleg_l_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="backleg_l_link"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="${pos_leg_back} ${1*(pos_leg_rl)*0.5} 0"/>
+        <limit lower="${leg_rev_limit_l}" upper="${leg_rev_limit_u}" effort="${leg_rev_limit_eff}" velocity="${leg_rev_limit_vel}"/>
+    </joint>
+    <joint name="frontleg_r_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="frontleg_r_link"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="${pos_leg_front} ${-1*(pos_leg_rl)*0.5} 0"/>
+        <limit lower="${leg_rev_limit_l}" upper="${leg_rev_limit_u}" effort="${leg_rev_limit_eff}" velocity="${leg_rev_limit_vel}"/>
+    </joint>
+    <joint name="frontleg_l_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="frontleg_l_link"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="${pos_leg_front} ${1*(pos_leg_rl)*0.5} 0"/>
+        <limit lower="${leg_rev_limit_l}" upper="${leg_rev_limit_u}" effort="${leg_rev_limit_eff}" velocity="${leg_rev_limit_vel}"/>
+    </joint>
+    <joint name="frontfoot_r_joint" type="revolute">
+        <parent link="frontleg_r_link"/>
+        <child link="frontfoot_r_link"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="${width_foot_front} ${-1*(width_foot_rl)*0.5} ${width_foot_v}"/>
+        <limit lower="${leg_rev_limit_l}" upper="${leg_rev_limit_u}" effort="${leg_rev_limit_eff}" velocity="${leg_rev_limit_vel}"/>
+    </joint>
+    <joint name="frontfoot_l_joint" type="revolute">
+        <parent link="frontleg_l_link"/>
+        <child link="frontfoot_l_link"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="${width_foot_front} ${1*(width_foot_rl)*0.5} ${width_foot_v}"/>
+        <limit lower="${leg_rev_limit_l}" upper="${leg_rev_limit_u}" effort="${leg_rev_limit_eff}" velocity="${leg_rev_limit_vel}"/>
+    </joint>
+    <joint name="backfoot_r_joint" type="revolute">
+        <parent link="backleg_r_link"/>
+        <child link="backfoot_r_link"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="${width_foot_back} ${-1*(width_foot_rl)*0.5} ${width_foot_v}"/>
+        <limit lower="${leg_rev_limit_l}" upper="${leg_rev_limit_u}" effort="${leg_rev_limit_eff}" velocity="${leg_rev_limit_vel}"/>
+    </joint>
+    <joint name="backfoot_l_joint" type="revolute">
+        <parent link="backleg_l_link"/>
+        <child link="backfoot_l_link"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="${width_foot_back} ${1*(width_foot_rl)*0.5} ${width_foot_v}"/>
+        <limit lower="${leg_rev_limit_l}" upper="${leg_rev_limit_u}" effort="${leg_rev_limit_eff}" velocity="${leg_rev_limit_vel}"/>
+    </joint>
+    <joint name="head_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="head_link"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="${pos_head_x} 0 ${pos_head_z}"/>
+        <limit lower="${leg_rev_limit_l}" upper="${leg_rev_limit_u}" effort="${leg_rev_limit_eff}" velocity="${leg_rev_limit_vel}"/>
+    </joint>
+
+    <!--backleg_r部分-->
+    <link name="backleg_r_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/leg_r.stl" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="red"/>
+        </visual>
+    </link>
+    <!--backleg_l部分-->
+    <link name="backleg_l_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/leg_l.stl" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="red"/>
+        </visual>
+    </link>
+
+    <!--frontleg_r部分-->
+    <link name="frontleg_r_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/leg_r.stl" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="red"/>
+        </visual>
+    </link>
+    <!--frontleg_l部分-->
+    <link name="frontleg_l_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/leg_l.stl" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="red"/>
+        </visual>
+    </link>
+
+    <link name="frontfoot_l_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/foot_l.stl" />
+            </geometry>
+            <origin xyz="0 0 0 " rpy="0 0 0"/>
+            <material name="yellow"/>
+        </visual>
+    </link>
+    <link name="frontfoot_r_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/foot_r.stl" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="yellow"/>
+        </visual>
+    </link>
+    <link name="backfoot_l_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/foot_l.stl" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="yellow"/>
+        </visual>
+    </link>
+    <link name="backfoot_r_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/foot_r.stl" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="yellow"/>
+        </visual>
+    </link>
+    <link name="head_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://mydogrobot_description/stl/head.stl" />
+            </geometry>
+            <origin xyz="0.02 0 0" rpy="0 0 0"/>
+            <material name="read"/>
+        </visual>
+    </link>
+
+
+</robot>
